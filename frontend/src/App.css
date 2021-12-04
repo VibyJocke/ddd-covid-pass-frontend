@@ -1,5 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
+
 .App {
   text-align: center;
+}
+
+h1 {
+  color:white !important;
+  margin: 0 !important;
+  font-size: 3em;
+  font-family: 'Staatliches', sans-serif;
 }
 
 .App-logo {
@@ -14,7 +23,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-image: linear-gradient(to bottom, #699b88, #383f4d);
   min-height: 100vh;
   display: flex;
   flex-direction: column;

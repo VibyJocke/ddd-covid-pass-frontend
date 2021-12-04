@@ -1,63 +1,89 @@
 import './App.css';
-import {Button, Form, Input, Modal} from "antd"
+import {Button, Divider, Form, Input, Modal} from "antd"
 import 'antd/dist/antd.css'
 import {useState} from "react"
 import axios from "axios"
 
 function App() {
+  const [registerForm] = Form.useForm();
   const [isRegisterModalVisible, setIsRegisterModalVisible] = useState(false)
-  const handleRegisterOk = () => {
-    axios.post("/covid-pass/patient/register", {personal_number: "12333223-3223", name: "Torkel"})
-    setIsRegisterModalVisible(false)
+  const handleRegisterOk = (data) => {
+    axios.post("/covid-pass/patient/register", data)
+      .then(() => setIsRegisterModalVisible(false))
+      .catch((err) => alert(err))
   };
 
+  const [vaccinateForm] = Form.useForm();
   const [isVaccinateModalVisible, setIsVaccinateModalVisible] = useState(false)
-  const handleVaccinateOk = () => {
-    axios.post("/covid-pass/patient/vaccinate", {
-      personal_number: "12333223-3223",
-      injection_date: "2021-12-04T17:45:55.9483536",
-      vaccine_type: "spikevax"
-    })
-    setIsVaccinateModalVisible(false)
+  const handleVaccinateOk = (data) => {
+    axios.post("/covid-pass/patient/vaccinate", data)
+      .then(() => setIsVaccinateModalVisible(false))
+      .catch((err) => alert(err))
   };
 
   return (
     <div className="App">
       <header className="App-header">
+        <h1>Covid pass</h1>
         <img
           src={"https://www.lr.se/images/18.2868ebc21711e3a43527642/1586246865764/SARS-CoV-2_without_background-770px.png"}
+          style={{margin: "100px", width: "300px", height: "auto"}}
           className="App-logo" alt="logo"/>
-        <h1>Covid pass</h1>
-        Welcome to the future of smittspridningsfixande
-        <Button onClick={() => setIsRegisterModalVisible(true)}>Register Patient</Button>
+        <div style={{margin: "20px"}}>
+          <Button type="primary" size="large" onClick={() => setIsRegisterModalVisible(true)}>Register patient</Button>
+          <Divider type="vertical"/>
+          <Button size="large" onClick={() => setIsVaccinateModalVisible(true)}>Register vaccination</Button>
+        </div>
+
         <Modal title="Register patient"
                visible={isRegisterModalVisible}
-               onOk={handleRegisterOk}
+               footer={null}
                onCancel={() => setIsRegisterModalVisible(false)}>
-          <Form labelAlign="right" labelCol={{span: 12}}>
-            <Form.Item name="name" label="Name">
+          <Form
+            form={registerForm}
+            name="register_form"
+            labelAlign="right"
+            labelCol={{span: 12}}
+            onFinish={handleRegisterOk}
+          >
+            <Form.Item name="name" label="Name" rules={[{required: true}]}>
               <Input type="text"/>
             </Form.Item>
-            <Form.Item name="personal_number" label="Personal number">
+            <Form.Item name="personal_number" label="Personal number" rules={[{required: true}]}>
               <Input type="text"/>
             </Form.Item>
+            <div style={{display: "flex", justifyContent: "flex-end"}}>
+              <Button type="primary" htmlType={"submit"}>
+                Submit
+              </Button>
+            </div>
           </Form>
         </Modal>
-        <Button onClick={() => setIsVaccinateModalVisible(true)}>Register Vaccination</Button>
+
         <Modal title="Register vaccination"
                visible={isVaccinateModalVisible}
-               onOk={handleVaccinateOk}
+               footer={null}
                onCancel={() => setIsVaccinateModalVisible(false)}>
-          <Form labelAlign="right" labelCol={{span: 12}}>
-            <Form.Item name="personal_number" label="Personal number">
+          <Form
+            form={vaccinateForm}
+            name="vaccinate_form"
+            labelAlign="right"
+            labelCol={{span: 12}}
+            onFinish={handleVaccinateOk}>
+            <Form.Item name="personal_number" label="Personal number" rules={[{required: true}]}>
               <Input type="text"/>
             </Form.Item>
-            <Form.Item name="vaccine_type" label="Vaccine type">
+            <Form.Item name="vaccine_type" label="Vaccine type" rules={[{required: true}]}>
               <Input type="text"/>
             </Form.Item>
-            <Form.Item name="injection_date" label="Date">
-              <Input type="date"/>
+            <Form.Item name="injection_date" label="Date" rules={[{required: true}]}>
+              <Input type="datetime-local"/>
             </Form.Item>
+            <div style={{display: "flex", justifyContent: "flex-end"}}>
+              <Button type="primary" htmlType={"submit"}>
+                Submit
+              </Button>
+            </div>
           </Form>
         </Modal>
       </header>
